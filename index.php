@@ -70,8 +70,11 @@ foreach($urls as $project_name => $link) {
     preg_match_all('/<a href=\"([^\"]+index\.html)\">/m', $body, $dates);
     preg_match_all('/<a href=\"([^\"]+threads\.html)\">/m', $body, $threads);
     
-    /*
+
     foreach($gzs[1] as $gz) {
+        if($fs->exists('mbox/' . $project_name . '/' . $gz)) {
+            continue;
+        }
         try {
             $client->request(
                     'GET',
@@ -83,8 +86,6 @@ foreach($urls as $project_name => $link) {
             echo('Download Failed: ' . $ex->getCode() . ' -- ' . $ex->getRequest()->getUri() . "\n");
         }
     }
-     *
-     */
     
     echo('Processing ' . $proper . ' by date' . "\n");
     
@@ -100,6 +101,10 @@ foreach($urls as $project_name => $link) {
             echo "An error occurred while creating your directory at ".$e->getPath();
             continue;
         }        
+        
+        if($fs->exists('html/bydate/' . $project_name . '/' . $date)) {
+            continue;
+        }
         
         // Downloads Date List Index Page
         try {
@@ -119,6 +124,9 @@ foreach($urls as $project_name => $link) {
         
         // Processes Each Date Page, and downloads thread htmls
         foreach($date_threads[1] as $date_thread) {
+            if($fs->exists('html/bydate/' . $project_name . '/' . $dir . '/' . $date_thread)) {
+                continue;
+            }
             try {
                 $client->request(
                     'GET', 
@@ -146,6 +154,9 @@ foreach($urls as $project_name => $link) {
             continue;
         }        
         
+        if($fs->exists('html/bythread/' . $project_name . '/' . $thread)) {
+            continue;
+        }
         // Downloads Date List Index Page
         try {
             $date_index = $client->request(
@@ -164,6 +175,9 @@ foreach($urls as $project_name => $link) {
         
         // Processes Each Thread Page, and downloads thread htmls
         foreach($date_threads[1] as $date_thread) {
+            if($fs->exists('html/bythread/' . $project_name . '/' . $dir . '/' . $date_thread)) {
+                continue;
+            }
             try {
                 $client->request(
                     'GET', 
