@@ -72,6 +72,8 @@ foreach($urls as $project_name => $link) {
     
 
     foreach($gzs[1] as $gz) {
+        //Replace "partial" as it is a broken mailbox.
+        $gz = str_replace('.partial.', '.', $gz);
         if($fs->exists('mbox/' . $project_name . '/' . $gz)) {
             continue;
         }
